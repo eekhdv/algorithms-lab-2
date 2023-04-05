@@ -6,14 +6,14 @@ pub struct Rect {
 }
 
 impl Rect {
-    fn new(lower_l: (i32, i32), upper_r: (i32, i32)) -> Self {
+    fn new(lower_l: Point, upper_r: Point) -> Self {
         Self {
-            lower_l: (Point::new(lower_l.0, lower_l.1)),
-            upper_r: (Point::new(upper_r.0, upper_r.1)),
+            lower_l: (lower_l),
+            upper_r: (upper_r),
         }
     }
 
-    pub fn from_vec(rect_coords: Vec<((i32, i32), (i32, i32))>) -> Vec<Rect> {
+    pub fn from_vec(rect_coords: Vec<(Point, Point)>) -> Vec<Rect> {
         let mut res_vec: Vec<Self> = Vec::with_capacity(rect_coords.capacity());
         for rect in rect_coords {
             res_vec.push(Self::new(rect.0, rect.1));
@@ -21,3 +21,10 @@ impl Rect {
         res_vec
     }
 }
+
+impl From<(Point, Point)> for Rect {
+    fn from(value: (Point, Point)) -> Self {
+        Self { lower_l: (value.0), upper_r: (value.1) }
+    }
+}
+
