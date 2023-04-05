@@ -1,6 +1,23 @@
 use crate::algorithms::structs::{point::Point, rect::Rect};
 
-pub(super) fn user_input() -> std::io::Result<(Point, Vec<Rect>)> {
+pub struct InputData {
+    pub p: Point,
+    pub rects: Vec<Rect>,
+}
+
+impl InputData {
+    fn new(p: Point, rects: Vec<Rect>) -> Self {
+        Self { p: (p), rects: (rects) }
+    }
+}
+
+impl From<(Point, Vec<Rect>)> for InputData {
+    fn from(value: (Point, Vec<Rect>)) -> Self {
+        Self::new(value.0, value.1)
+    }
+}
+
+pub(super) fn user_input() -> std::io::Result<InputData> {
     let mut buf = String::new();
     let stdin = std::io::stdin();
 
@@ -21,7 +38,7 @@ pub(super) fn user_input() -> std::io::Result<(Point, Vec<Rect>)> {
     print!("Enter point coords (\"x y\"): ");
     let p = read_point(&stdin, &mut buf)?;
 
-    Ok((p, rects))
+    Ok(InputData::from((p, rects)))
 }
 
 fn read_point(stdin: &std::io::Stdin, buf: &mut String) -> std::io::Result<Point> {
