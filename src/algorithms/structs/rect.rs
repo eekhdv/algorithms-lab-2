@@ -7,7 +7,10 @@ pub struct Rect {
 
 impl Rect {
     fn new(lower_l: (i32, i32), upper_r: (i32, i32)) -> Self {
-        Self { lower_l: (Point::new(lower_l.0, lower_l.1)), upper_r: (Point::new(upper_r.0, upper_r.1)) }
+        Self {
+            lower_l: (Point::new(lower_l.0, lower_l.1)),
+            upper_r: (Point::new(upper_r.0, upper_r.1)),
+        }
     }
 
     pub fn from_vec(rect_coords: Vec<((i32, i32), (i32, i32))>) -> Vec<Rect> {
@@ -18,4 +21,3 @@ impl Rect {
         res_vec
     }
 }
-
