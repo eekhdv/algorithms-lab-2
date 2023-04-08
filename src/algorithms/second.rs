@@ -8,8 +8,9 @@ struct CompressedMap;
 impl SecondLabSolution for CompressedMap {
     fn count_rect_for_point(p: Point, rects: Vec<Rect>) -> u32 {
         let (xs, ys): (Vec<i32>, Vec<i32>) = Self::compress_points(&rects);
-
-        0
+        let compressed_map = Self::create_compressed_map(&xs, &ys);
+        let ans = Self::find_point_in_map(&compressed_map, &p);
+        ans
     }
 }
 
@@ -23,7 +24,11 @@ impl CompressedMap {
         (c_x.to_owned(), c_y.to_owned())
     }
 
-    fn create_compressed_map() -> Vec<Vec<u32>> {
+    fn find_point_in_map(map: &Vec<Vec<i32>>, p: &Point) -> u32 {
+        unimplemented!()
+    }
+
+    fn create_compressed_map(c_x: &Vec<i32>, c_y: &Vec<i32>) -> Vec<Vec<i32>> {
         // let mut c_map: Vec<Vec<i32>> = Vec::with_capacity(compressed_x.capacity());
         // for _i in 0..compressed_x.len() {
         //     c_map.push(Vec::with_capacity(compressed_y.capacity()));
