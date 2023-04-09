@@ -6,10 +6,10 @@ use super::structs::{
 use super::traits::lab::SecondLabSolution;
 
 #[derive(Debug)]
-struct AlgorithmOnMap;
+pub struct AlgorithmOnMap;
 
 impl SecondLabSolution for AlgorithmOnMap {
-    fn count_rect_for_point(p: Point, rects: Vec<Rect>) -> u32 {
+    fn count_rect_for_point(p: &Point, rects: &Vec<Rect>) -> u32 {
         let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
             CompressedIndex::from_rects(&rects);
         c_idx.compress();
