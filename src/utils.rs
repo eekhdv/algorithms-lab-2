@@ -7,7 +7,10 @@ pub struct InputData {
 
 impl InputData {
     fn new(p: Point, rects: Vec<Rect>) -> Self {
-        Self { p: (p), rects: (rects) }
+        Self {
+            p: (p),
+            rects: (rects),
+        }
     }
 }
 
@@ -33,7 +36,7 @@ pub(super) fn user_input() -> std::io::Result<InputData> {
         print!("[{i} rect] Enter upper-right rectangle coords (\"x y\"): ");
         let ur = read_point(&stdin, &mut buf)?;
 
-        rects.push(Rect::from((ll, ur)));
+        rects.push(Rect::new(ll, ur));
     }
     print!("Enter point coords (\"x y\"): ");
     let p = read_point(&stdin, &mut buf)?;
