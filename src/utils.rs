@@ -7,7 +7,10 @@ pub struct InputData {
 
 impl InputData {
     fn new(p: Point, rects: Vec<Rect>) -> Self {
-        Self { p: (p), rects: (rects) }
+        Self {
+            p: (p),
+            rects: (rects),
+        }
     }
 }
 
