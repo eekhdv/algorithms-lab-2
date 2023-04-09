@@ -24,7 +24,9 @@ impl Rect {
 
 impl From<(Point, Point)> for Rect {
     fn from(value: (Point, Point)) -> Self {
-        Self { lower_l: (value.0), upper_r: (value.1) }
+        Self {
+            lower_l: (value.0),
+            upper_r: (value.1),
+        }
     }
 }
-
