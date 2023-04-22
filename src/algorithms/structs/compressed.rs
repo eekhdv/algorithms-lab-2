@@ -7,17 +7,25 @@ pub struct CompressedIndex {
 }
 
 impl CompressedIndex {
-    fn new(v: Vec<i32>) -> Self {
+    pub fn new(v: Vec<i32>) -> Self {
         Self { c_index: v }
     }
-    fn get_index_of(&self, val: &i32) -> usize {
-        self.c_index.iter().find_position(|i| i > &val).unwrap().0 - 1
+    pub fn get_index_of(&self, val: &i32) -> usize {
+        let i = self.c_index.iter().find_position(|i| i >= &val).unwrap().0;
+        if self.c_index.get(i).unwrap() == val {
+            i
+        } else {
+            i - 1
+        }
     }
-    fn len(&self) -> usize {
+    pub fn len(&self) -> usize {
         self.c_index.len()
     }
-    fn capacity(&self) -> usize {
+    pub fn capacity(&self) -> usize {
         self.c_index.capacity()
+    }
+    pub fn add(&mut self, p: i32) {
+        self.c_index.push(p);
     }
     pub fn from_rects(r: &Vec<Rect>) -> (Self, Self) {
         let mut c_x = Vec::new();
