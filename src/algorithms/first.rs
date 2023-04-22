@@ -5,13 +5,16 @@ use super::traits::lab::SecondLabSolution;
 pub struct AlgorithmBruteForce;
 
 impl SecondLabSolution for AlgorithmBruteForce {
-    fn count_rect_for_point(p: &Point, rects: &Vec<Rect>) -> u32 {
+    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> u32 {
         let mut res = 0;
-        rects.iter().for_each(|x| {
-            if x.is_in(&p) {
-                res += 1;
-            }
-        });
+        for p in points {
+            rects.iter().for_each(|x| {
+                if x.is_in(&p) {
+                    res += 1;
+                }
+            });
+            println!("{res}");
+        }
         res
     }
 }

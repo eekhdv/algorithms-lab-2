@@ -9,15 +9,18 @@ use super::traits::lab::SecondLabSolution;
 pub struct AlgorithmOnMap;
 
 impl SecondLabSolution for AlgorithmOnMap {
-    fn count_rect_for_point(p: &Point, rects: &Vec<Rect>) -> u32 {
+    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> u32 {
         let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
             CompressedIndex::from_rects(&rects);
         c_idx.compress();
         c_idy.compress();
         let mut c_map = CompressedMap::from((&c_idx, &c_idy));
         c_map.fill_with(&rects);
-        let ans = Self::find_point_in_map(&c_map, &p);
-        ans
+        for p in points {
+            let ans = Self::find_point_in_map(&c_map, &p);
+            println!("{ans}")
+        }
+        0
     }
 }
 
