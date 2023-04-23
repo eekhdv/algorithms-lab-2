@@ -1,4 +1,4 @@
-use super::structs::compressed::CompressedIndex;
+use super::structs::compressed::index::CompressedIndex;
 use super::structs::{point::Point, rect::Rect};
 use super::traits::lab::LabSolution;
 
@@ -6,21 +6,24 @@ use super::traits::lab::LabSolution;
 pub struct AlgorithmOnPersistenTree;
 impl LabSolution for AlgorithmOnPersistenTree {
     fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) {
-        let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
-            CompressedIndex::from_rects(&rects);
-        c_idx.compress();
-        c_idy.compress();
-        // println!("{:?}", c_idx);
-        // println!("{:?}", c_idy);
+        if rects.is_empty() {
+            print!("Here is no rectangles");
+        } else {
+            let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
+                CompressedIndex::from_rects(&rects);
+            c_idx.compress();
+            c_idy.compress();
 
-        let (seg_tree, c_idr) = PersistentTree::build_with(&c_idx, &c_idy, rects);
+            let (seg_tree, c_idr) = PersistentTree::build_with(&c_idx, &c_idy, rects);
 
-        for p in points {
-            println!(
-                "{:?}",
-                PersistentTree::query(&seg_tree, p, &c_idr, &c_idx, &c_idy)
-            );
+            for p in points {
+                print!(
+                    "{} ",
+                    PersistentTree::query(&seg_tree, p, &c_idr, &c_idx, &c_idy)
+                );
+            }
         }
+        println!();
     }
 }
 
@@ -41,17 +44,14 @@ impl Node {
     }
 
     fn insert(&self, l: i32, r: i32, val: i32, lb: i32, rb: i32) -> Box<Node> {
-        println!("{l}[{lb} {rb}]{r}");
         let mut new_node = self.clone();
         if l >= rb || r <= lb {
             return Box::new(new_node);
         }
         if l <= lb && rb <= r {
-            println!("^ + {val}");
             new_node.val += val;
             return Box::new(new_node);
         }
-        println!("^ here we go again..");
         let mid = (lb + rb) / 2;
 
         if self.left.is_none() {
@@ -122,15 +122,14 @@ impl PersistentTree {
         c_idx: &CompressedIndex,
         c_idy: &CompressedIndex,
     ) -> i32 {
-        // println!("{:?}", c_idr);
-        // println!("new point query: ({} {})", p.x, p.y);
         let idx = c_idx.get_index_of(&p.x);
         let idy = c_idy.get_index_of(&p.y);
         let idr = c_idr.get_index_of(&(idx as i32));
-        // println!("x: {} y: {} r: {}", idx, idy, idr);
-        // println!("{:#?}", seg_tree[idr]);
-
-        seg_tree[idr].sum(0, c_idy.len() as i32, idy as i32)
+        if idr >= 0 {
+            seg_tree[idr as usize].sum(0, c_idy.len() as i32, idy as i32)
+        } else {
+            0
+        }
     }
 
     fn sum(&self, _l: i32, _r: i32, c_y: i32) -> i32 {
@@ -149,9 +148,9 @@ impl PersistentTree {
         }
         #[derive(Debug)]
         struct PointToAdd {
-            c_x: usize,
-            c_yd: usize,
-            c_yu: usize,
+            c_x: i32,
+            c_yd: i32,
+            c_yu: i32,
             pos: PointPos,
         }
 
@@ -186,8 +185,6 @@ impl PersistentTree {
                 c_rx.push(prev_point as i32);
                 prev_point = point_to_add.c_x;
             }
-            // println!("{:?}", point_to_add);
-            // println!("{:?}", c_idy.len());
             root = root.insert(
                 point_to_add.c_yd as i32,
                 point_to_add.c_yu as i32,
@@ -198,25 +195,10 @@ impl PersistentTree {
                 0,
                 c_idy.len() as i32,
             );
-            // if point_to_add.c_x == 0 {
-
-            // println!("{:#?}", root);
-            // }
         }
         c_rx.push(prev_point as i32);
         roots.push(root.clone());
         let c_rx = CompressedIndex::new(c_rx);
-        // println!("{:#?}", roots.len());
-        // println!("{:#?}", roots[0]);
-        // println!("{:#?}", c_idy);
-        // println!("{:#?}", roots[0].sum(0, c_idy.len() as i32, 1));
-        // println!(
-        //     "{:?}----",
-        //     roots
-        //         .last()
-        //         .unwrap()
-        //         .query(Point { x: 2, y: 2 }, c_idx, c_idx)
-        // );
         (roots, c_rx)
     }
 }
