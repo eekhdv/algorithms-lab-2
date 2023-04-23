@@ -5,17 +5,18 @@ use super::traits::lab::LabSolution;
 pub struct AlgorithmBruteForce;
 
 impl LabSolution for AlgorithmBruteForce {
-    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) {
+    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> Vec<i32> {
+        let mut res: Vec<i32> = Vec::with_capacity(points.len());
         for p in points {
-            let mut res = 0;
+            let mut r = 0;
             rects.iter().for_each(|x| {
                 if x.is_in(&p) {
-                    res += 1;
+                    r += 1;
                 }
             });
-            print!("{res} ");
+            res.push(r);
         }
-        println!();
+        res
     }
 }
 
