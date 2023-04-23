@@ -1,6 +1,7 @@
 pub mod index {
     use crate::algorithms::structs::rect::Rect;
     use itertools::Itertools;
+
     #[derive(Debug, Clone)]
     pub struct CompressedIndex {
         c_index: Vec<i32>,
@@ -49,6 +50,8 @@ pub mod index {
 }
 
 pub mod map {
+    use std::ops::Deref;
+
     use super::index::CompressedIndex;
     use crate::algorithms::structs::{point::Point, rect::Rect};
     #[derive(Debug)]
@@ -56,6 +59,13 @@ pub mod map {
         c_map: Vec<Vec<u32>>,
         c_idx: CompressedIndex,
         c_idy: CompressedIndex,
+    }
+
+    impl Deref for CompressedMap {
+        type Target = Vec<Vec<u32>>;
+        fn deref(&self) -> &Self::Target {
+            &self.c_map
+        }
     }
 
     impl CompressedMap {
@@ -71,9 +81,9 @@ pub mod map {
                     self.c_idx.get_index_of(&ur.x) as i32,
                     self.c_idy.get_index_of(&ur.y) as i32,
                 );
-                for i in ll.x..=ur.x {
-                    for j in ll.y..=ur.y {
-                        self.c_map[i as usize][j as usize] += 1;
+                for x in ll.x..=ur.x {
+                    for y in ll.y..=ur.y {
+                        self.c_map[x as usize][y as usize] += 1;
                     }
                 }
             }
@@ -81,7 +91,7 @@ pub mod map {
 
         pub fn get_value(&self, p: &Point) -> u32 {
             let id_x = self.c_idx.get_index_of(&p.x);
-            let id_y = self.c_idx.get_index_of(&p.y);
+            let id_y = self.c_idy.get_index_of(&p.y);
             self.c_map[id_x as usize][id_y as usize]
         }
     }
@@ -89,10 +99,7 @@ pub mod map {
     impl From<(&CompressedIndex, &CompressedIndex)> for CompressedMap {
         fn from(value: (&CompressedIndex, &CompressedIndex)) -> Self {
             let (c_x, c_y) = value;
-            let mut c_map: Vec<Vec<u32>> = Vec::with_capacity(c_x.capacity());
-            for _i in 0..c_x.len() {
-                c_map.push(Vec::with_capacity(c_y.capacity()));
-            }
+            let c_map: Vec<Vec<u32>> = vec![vec![0; c_y.len()]; c_x.len()];
             Self {
                 c_map: (c_map),
                 c_idx: c_x.clone(),
