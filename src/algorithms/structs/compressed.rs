@@ -24,9 +24,6 @@ impl CompressedIndex {
     pub fn capacity(&self) -> usize {
         self.c_index.capacity()
     }
-    pub fn add(&mut self, p: i32) {
-        self.c_index.push(p);
-    }
     pub fn from_rects(r: &Vec<Rect>) -> (Self, Self) {
         let mut c_x = Vec::new();
         let mut c_y = Vec::new();
@@ -34,7 +31,9 @@ impl CompressedIndex {
             c_x.push(r.lower_l.x);
             c_y.push(r.lower_l.y);
             c_x.push(r.upper_r.x);
+            c_x.push(r.upper_r.x + 1);
             c_y.push(r.upper_r.y);
+            c_y.push(r.upper_r.y + 1);
         });
         (Self::new(c_x), Self::new(c_y))
     }
