@@ -6,8 +6,8 @@ pub struct AlgorithmBruteForce;
 
 impl LabSolution for AlgorithmBruteForce {
     fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) {
-        let mut res = 0;
         for p in points {
+            let mut res = 0;
             rects.iter().for_each(|x| {
                 if x.is_in(&p) {
                     res += 1;
@@ -22,6 +22,6 @@ impl LabSolution for AlgorithmBruteForce {
 impl Rect {
     fn is_in(&self, p: &Point) -> bool {
         (self.lower_l.x <= p.x && p.x <= self.upper_r.x)
-            && (self.lower_l.x <= p.y && p.y <= self.upper_r.y)
+            && (self.lower_l.y <= p.y && p.y <= self.upper_r.y)
     }
 }
