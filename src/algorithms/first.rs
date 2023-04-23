@@ -1,11 +1,11 @@
 use super::structs::{point::Point, rect::Rect};
-use super::traits::lab::SecondLabSolution;
+use super::traits::lab::LabSolution;
 
 #[derive(Debug)]
 pub struct AlgorithmBruteForce;
 
-impl SecondLabSolution for AlgorithmBruteForce {
-    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> u32 {
+impl LabSolution for AlgorithmBruteForce {
+    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) {
         let mut res = 0;
         for p in points {
             rects.iter().for_each(|x| {
@@ -13,9 +13,9 @@ impl SecondLabSolution for AlgorithmBruteForce {
                     res += 1;
                 }
             });
-            println!("{res}");
+            print!("{res} ");
         }
-        res
+        println!();
     }
 }
 

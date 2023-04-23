@@ -3,13 +3,13 @@ use super::structs::{
     point::Point,
     rect::Rect,
 };
-use super::traits::lab::SecondLabSolution;
+use super::traits::lab::LabSolution;
 
 #[derive(Debug)]
 pub struct AlgorithmOnMap;
 
-impl SecondLabSolution for AlgorithmOnMap {
-    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> u32 {
+impl LabSolution for AlgorithmOnMap {
+    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) {
         let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
             CompressedIndex::from_rects(&rects);
         c_idx.compress();
@@ -18,9 +18,9 @@ impl SecondLabSolution for AlgorithmOnMap {
         c_map.fill_with(&rects);
         for p in points {
             let ans = Self::find_point_in_map(&c_map, &p);
-            println!("{ans}")
+            print!("{ans} ")
         }
-        0
+        println!();
     }
 }
 
