@@ -1,23 +1,30 @@
 use super::structs::{
-    compressed::{CompressedIndex, CompressedMap},
+    compressed::{index::CompressedIndex, map::CompressedMap},
     point::Point,
     rect::Rect,
 };
-use super::traits::lab::SecondLabSolution;
+use super::traits::lab::LabSolution;
 
 #[derive(Debug)]
 pub struct AlgorithmOnMap;
 
-impl SecondLabSolution for AlgorithmOnMap {
-    fn count_rect_for_point(p: &Point, rects: &Vec<Rect>) -> u32 {
-        let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
-            CompressedIndex::from_rects(&rects);
-        c_idx.compress();
-        c_idy.compress();
-        let mut c_map = CompressedMap::from((&c_idx, &c_idy));
-        c_map.fill_with(&rects);
-        let ans = Self::find_point_in_map(&c_map, &p);
-        ans
+impl LabSolution for AlgorithmOnMap {
+    fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) {
+        if rects.is_empty() {
+            print!("Here is no rectangles");
+        } else {
+            let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
+                CompressedIndex::from_rects(&rects);
+            c_idx.compress();
+            c_idy.compress();
+            let mut c_map = CompressedMap::from((&c_idx, &c_idy));
+            c_map.fill_with(&rects);
+            for p in points {
+                let ans = Self::find_point_in_map(&c_map, &p);
+                print!("{ans} ")
+            }
+        }
+        println!();
     }
 }
 
