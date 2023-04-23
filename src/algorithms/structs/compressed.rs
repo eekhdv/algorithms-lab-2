@@ -89,10 +89,14 @@ pub mod map {
             }
         }
 
-        pub fn get_value(&self, p: &Point) -> u32 {
+        pub fn get_value(&self, p: &Point) -> Option<u32> {
             let id_x = self.c_idx.get_index_of(&p.x);
             let id_y = self.c_idy.get_index_of(&p.y);
-            self.c_map[id_x as usize][id_y as usize]
+            if id_x == -1 || id_y == -1 {
+                None
+            } else {
+                Some(self.c_map[id_x as usize][id_y as usize])
+            }
         }
     }
 
