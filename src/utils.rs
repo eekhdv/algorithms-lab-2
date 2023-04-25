@@ -24,30 +24,30 @@ pub(super) fn user_input() -> std::io::Result<InputData> {
     let mut buf = String::new();
     let stdin = std::io::stdin();
 
-    println!("Enter number of rectangles: ");
+    // println!("Enter number of rectangles: ");
     stdin.read_line(&mut buf)?;
     let n: i32 = buf.strip_suffix('\n').unwrap().parse().unwrap();
     buf.clear();
     let mut rects: Vec<Rect> = Vec::new();
 
-    for i in 0..n {
-        println!(
-            "[{i} rect] Enter lower-left and upper right rectangle coords (\"x1 y1 x2 y2\"): "
-        );
+    for _i in 0..n {
+        // println!(
+        //     "[{i} rect] Enter lower-left and upper right rectangle coords (\"x1 y1 x2 y2\"): "
+        // );
         let rect = read_rect(&stdin, &mut buf)?;
         rects.push(rect);
         buf.clear();
     }
-    println!("Enter number of points: ");
+    // println!("Enter number of points: ");
     stdin.read_line(&mut buf)?;
 
-    println!("Enter point coords (\"x y\"): ");
+    // println!("Enter point coords (\"x y\"): ");
     let m: i32 = buf.strip_suffix('\n').unwrap().parse().unwrap();
     let mut points: Vec<Point> = Vec::new();
     buf.clear();
 
-    for i in 0..m {
-        println!("[{i} point] Enter point coords (\"x y\"): ");
+    for _i in 0..m {
+        // println!("[{i} point] Enter point coords (\"x y\"): ");
         let p = read_point(&stdin, &mut buf)?;
         buf.clear();
         points.push(p);
@@ -78,4 +78,38 @@ fn read_rect(stdin: &std::io::Stdin, buf: &mut String) -> std::io::Result<Rect> 
     );
 
     Ok(Rect::new(Point::from_tup(p1), Point::from_tup(p2)))
+}
+
+pub fn lower_bound(a: &Vec<i32>, t: i32) -> i32 {
+    let (mut l, mut r) = (-1, a.len() as i32);
+    while r > l + 1 {
+        let mid = (l + r) / 2;
+        if a[mid as usize] >= t {
+            r = mid;
+        } else {
+            l = mid;
+        }
+    }
+    if r != a.len() as i32 && a[r as usize] == t {
+        r
+    } else {
+        r - 1
+    }
+}
+
+pub fn upper_bound(a: &Vec<i32>, t: i32) -> i32 {
+    let (mut l, mut r) = (-1, a.len() as i32);
+    while r > l + 1 {
+        let mid = (l + r) / 2;
+        if a[mid as usize] > t {
+            r = mid;
+        } else {
+            l = mid;
+        }
+    }
+    if l != -1 && a[l as usize] == t || l + 1 == a.len() as i32 {
+        l
+    } else {
+        l + 1
+    }
 }
