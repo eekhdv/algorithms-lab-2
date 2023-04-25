@@ -79,3 +79,37 @@ fn read_rect(stdin: &std::io::Stdin, buf: &mut String) -> std::io::Result<Rect> 
 
     Ok(Rect::new(Point::from_tup(p1), Point::from_tup(p2)))
 }
+
+pub fn lower_bound(a: &Vec<i32>, t: i32) -> i32 {
+    let (mut l, mut r) = (-1, a.len() as i32);
+    while r > l + 1 {
+        let mid = (l + r) / 2;
+        if a[mid as usize] >= t {
+            r = mid;
+        } else {
+            l = mid;
+        }
+    }
+    if r != a.len() as i32 && a[r as usize] == t {
+        r
+    } else {
+        r - 1
+    }
+}
+
+pub fn upper_bound(a: &Vec<i32>, t: i32) -> i32 {
+    let (mut l, mut r) = (-1, a.len() as i32);
+    while r > l + 1 {
+        let mid = (l + r) / 2;
+        if a[mid as usize] > t {
+            r = mid;
+        } else {
+            l = mid;
+        }
+    }
+    if l != -1 && a[l as usize] == t || l + 1 == a.len() as i32 {
+        l
+    } else {
+        l + 1
+    }
+}
