@@ -94,10 +94,13 @@ mod tests {
             test_data.rects.len()
         );
 
-        let start = Instant::now();
-        let _second_data_prep = algorithms::second::AlgorithmOnMap::prepare_data(&test_data.rects);
-        let duration = start.elapsed();
-        println!("2 (p) -> time: {} ns", duration.as_nanos());
+        if test_data.rects.len() <= 2000 {
+            let start = Instant::now();
+            let _second_data_prep =
+                algorithms::second::AlgorithmOnMap::prepare_data(&test_data.rects);
+            let duration = start.elapsed();
+            println!("2 (p) -> time: {} ns", duration.as_nanos());
+        }
 
         let start = Instant::now();
         let _third_data_prep =
