@@ -1,4 +1,7 @@
 # Algorithm's course 2nd lab
+
+[Русская версия](https://github.com/khadievedem/algorithms-lab-2/blob/main/README-RU.md)
+
 The task requires efficient processing of a large number of rectangles and points. Three different algorithms were implemented and tested to determine the most efficient one. The algorithms were tested on different volumes of initial data and points to determine their efficiency. The results of the tests were analyzed to determine the most efficient algorithm for this task.
 
 ## Table of Contents
