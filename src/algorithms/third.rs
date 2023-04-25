@@ -6,23 +6,26 @@ use super::traits::lab::LabSolution;
 #[derive(Debug)]
 pub struct AlgorithmOnPersistenTree;
 
-impl LabSolution for AlgorithmOnPersistenTree {
+impl LabSolution<&Vec<Rect>, ((Vec<PersistentTree>, CompressedIndex), CompressedIndex, CompressedIndex)> for AlgorithmOnPersistenTree {
     fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> Vec<i32> {
         let mut res: Vec<i32> = Vec::with_capacity(points.len());
         if rects.is_empty() {
             res = vec![0; points.len()];
         } else {
-            let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
-                CompressedIndex::from_rects(&rects);
-            c_idx.compress();
-            c_idy.compress();
-
-            let (seg_tree, c_idr) = PersistentTree::build_with(&c_idx, &c_idy, rects);
-
+            let ((seg_tree, c_idr), c_idx, c_idy) = Self::prepare_data(rects).unwrap();
             for p in points {
                 res.push(PersistentTree::query(&seg_tree, p, &c_idr, &c_idx, &c_idy));
             }
         }
         res
+    }
+
+    fn prepare_data(rects: &Vec<Rect>) -> Option<((Vec<PersistentTree>, CompressedIndex), CompressedIndex, CompressedIndex)> {
+            let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
+                CompressedIndex::from_rects(&rects);
+            c_idx.compress();
+            c_idy.compress();
+
+            Some((PersistentTree::build_with(&c_idx, &c_idy, rects), c_idx, c_idy))
     }
 }
