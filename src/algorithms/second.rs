@@ -10,18 +10,25 @@ pub struct AlgorithmOnMap;
 
 impl LabSolution<&Vec<Rect>, CompressedMap> for AlgorithmOnMap {
     fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> Vec<i32> {
-        let mut res: Vec<i32> = Vec::with_capacity(points.len());
+        let res;
         if rects.is_empty() {
             res = vec![0; points.len()];
         } else {
-            let c_map = Self::prepare_data(rects).unwrap();
-
-            for p in points {
-                res.push(Self::find_point_in_map(&c_map, &p) as i32);
-            }
+            let prep_data = Self::prepare_data(rects).unwrap();
+            res = Self::run_with_prepared(prep_data, points);
         }
         res
     }
+
+    fn run_with_prepared(prepared_data: CompressedMap, points: &Vec<Point>) -> Vec<i32> {
+        let mut res: Vec<i32> = Vec::with_capacity(points.len());
+        let c_map = prepared_data;
+        for p in points {
+            res.push(Self::find_point_in_map(&c_map, &p) as i32);
+        }
+        res
+    }
+
     fn prepare_data(rects: &Vec<Rect>) -> Option<CompressedMap> {
         let (mut c_idx, mut c_idy): (CompressedIndex, CompressedIndex) =
             CompressedIndex::from_rects(&rects);

@@ -4,7 +4,7 @@ use super::traits::lab::LabSolution;
 #[derive(Debug)]
 pub struct AlgorithmBruteForce;
 
-impl LabSolution<Vec<Rect>, Vec<i32>> for AlgorithmBruteForce {
+impl LabSolution<Vec<Rect>, Vec<Rect>> for AlgorithmBruteForce {
     fn count_rect_for_point(points: &Vec<Point>, rects: &Vec<Rect>) -> Vec<i32> {
         let mut res: Vec<i32> = Vec::with_capacity(points.len());
         for p in points {
@@ -17,6 +17,9 @@ impl LabSolution<Vec<Rect>, Vec<i32>> for AlgorithmBruteForce {
             res.push(r);
         }
         res
+    }
+    fn run_with_prepared(rects: Vec<Rect>, p: &Vec<Point>) -> Vec<i32> {
+        Self::count_rect_for_point(p, &rects)
     }
 }
 
