@@ -21,13 +21,13 @@ impl
         if rects.is_empty() {
             res = vec![0; points.len()];
         } else {
-            res = Self::run_with_prepared(Self::prepare_data(rects).unwrap(), points);
+            res = Self::run_with_prepared(&Self::prepare_data(rects).unwrap(), points);
         }
         res
     }
 
     fn run_with_prepared(
-        prepared_data: (
+        prepared_data: &(
             (Vec<PersistentTree>, CompressedIndex),
             CompressedIndex,
             CompressedIndex,
@@ -40,6 +40,18 @@ impl
             res.push(PersistentTree::query(&seg_tree, p, &c_idr, &c_idx, &c_idy));
         }
         res
+    }
+
+    fn find_single_point(
+        prepared_data: &(
+            (Vec<PersistentTree>, CompressedIndex),
+            CompressedIndex,
+            CompressedIndex,
+        ),
+        p: &Point,
+    ) -> i32 {
+        let ((seg_tree, c_idr), c_idx, c_idy) = prepared_data;
+        PersistentTree::query(&seg_tree, p, &c_idr, &c_idx, &c_idy)
     }
 
     fn prepare_data(

@@ -15,18 +15,22 @@ impl LabSolution<&Vec<Rect>, CompressedMap> for AlgorithmOnMap {
             res = vec![0; points.len()];
         } else {
             let prep_data = Self::prepare_data(rects).unwrap();
-            res = Self::run_with_prepared(prep_data, points);
+            res = Self::run_with_prepared(&prep_data, points);
         }
         res
     }
 
-    fn run_with_prepared(prepared_data: CompressedMap, points: &Vec<Point>) -> Vec<i32> {
+    fn run_with_prepared(prepared_data: &CompressedMap, points: &Vec<Point>) -> Vec<i32> {
         let mut res: Vec<i32> = Vec::with_capacity(points.len());
         let c_map = prepared_data;
         for p in points {
             res.push(Self::find_point_in_map(&c_map, &p) as i32);
         }
         res
+    }
+
+    fn find_single_point(prepared_data: &CompressedMap, p: &Point) -> i32 {
+        Self::find_point_in_map(&prepared_data, &p) as i32
     }
 
     fn prepare_data(rects: &Vec<Rect>) -> Option<CompressedMap> {

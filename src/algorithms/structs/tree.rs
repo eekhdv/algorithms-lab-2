@@ -1,12 +1,14 @@
+use std::rc::Rc;
+
 use crate::algorithms::structs::compressed::index::CompressedIndex;
 use crate::algorithms::structs::point::Point;
 use crate::algorithms::structs::rect::Rect;
 
 #[derive(Debug, Clone)]
-struct Node {
+pub struct Node {
     val: i32,
-    left: Option<Box<Node>>,
-    right: Option<Box<Node>>,
+    left: Option<Rc<Node>>,
+    right: Option<Rc<Node>>,
 }
 
 impl Node {
@@ -18,50 +20,57 @@ impl Node {
         }
     }
 
-    fn insert(&self, l: i32, r: i32, val: i32, lb: i32, rb: i32) -> Box<Node> {
-        let mut new_node = self.clone();
+    pub fn insert(node: &Rc<Node>, l: i32, r: i32, val: i32, lb: i32, rb: i32) -> Rc<Node> {
         if l >= rb || r <= lb {
-            return Box::new(new_node);
-        }
-        if l <= lb && rb <= r {
+            Rc::clone(node)
+        } else if l <= lb && rb <= r {
+            let mut new_node = Node {
+                val: node.val,
+                left: node.left.clone(),
+                right: node.right.clone(),
+            };
             new_node.val += val;
-            return Box::new(new_node);
-        }
-        let mid = (lb + rb) / 2;
+            Rc::new(new_node)
+        } else {
+            let mid = (lb + rb) / 2;
+            let mut new_node = Node {
+                val: node.val,
+                left: node.left.clone(),
+                right: node.right.clone(),
+            };
 
-        if self.left.is_none() {
-            new_node.left = Some(Box::new(Node::new(0)));
+            if node.left.is_none() {
+                new_node.left = Some(Rc::new(Node::new(0)));
+            }
+            if let Some(left_child) = &new_node.left {
+                new_node.left = Some(Self::insert(left_child, l, r, val, lb, mid));
+            }
+            if node.right.is_none() {
+                new_node.right = Some(Rc::new(Node::new(0)));
+            }
+            if let Some(right_child) = &new_node.right {
+                new_node.right = Some(Self::insert(right_child, l, r, val, mid, rb));
+            }
+            Rc::new(new_node)
         }
-        if let Some(left_child) = &new_node.left {
-            new_node.left = Some(left_child.insert(l, r, val, lb, mid));
-        }
-        if self.right.is_none() {
-            new_node.right = Some(Box::new(Node::new(0)));
-        }
-        if let Some(right_child) = &new_node.right {
-            new_node.right = Some(right_child.insert(l, r, val, mid, rb));
-        }
-        Box::new(new_node)
     }
 
-    fn sum(&self, _l: i32, _r: i32, c_y: i32) -> i32 {
-        let l = _l;
-        let r = _r;
-        let cur_node = Box::new(self.clone());
+    fn sum(node: &Rc<Node>, l: i32, r: i32, c_y: i32) -> i32 {
+        let cur_node = node.clone();
         if r - l == 1 {
             return cur_node.val;
         }
 
         let mid = (l + r) / 2;
         if c_y < mid {
-            if let Some(l_child) = cur_node.left {
-                return cur_node.val + l_child.sum(l, mid, c_y);
+            if let Some(ref l_child) = cur_node.left {
+                return cur_node.val + Self::sum(&l_child, l, mid, c_y);
             } else {
                 return cur_node.val;
             }
         } else {
-            if let Some(r_child) = cur_node.right {
-                return cur_node.val + r_child.sum(mid, r, c_y);
+            if let Some(ref r_child) = cur_node.right {
+                return cur_node.val + Self::sum(&r_child, mid, r, c_y);
             } else {
                 return cur_node.val;
             }
@@ -71,7 +80,7 @@ impl Node {
 
 #[derive(Debug, Clone)]
 pub struct PersistentTree {
-    root: Option<Box<Node>>,
+    root: Option<Rc<Node>>,
 }
 
 impl PersistentTree {
@@ -82,10 +91,10 @@ impl PersistentTree {
     fn insert(&self, l: i32, r: i32, val: i32, lb: i32, rb: i32) -> Self {
         let mut new_root = self.root.clone();
         if self.root.is_none() {
-            new_root = Some(Box::new(Node::new(0)));
+            new_root = Some(Rc::new(Node::new(0)));
         }
         if let Some(new_r) = new_root {
-            new_root = Some(new_r.insert(l, r, val, lb, rb));
+            new_root = Some(Node::insert(&new_r, l, r, val, lb, rb));
         };
         PersistentTree { root: new_root }
     }
@@ -97,9 +106,8 @@ impl PersistentTree {
         c_idx: &CompressedIndex,
         c_idy: &CompressedIndex,
     ) -> i32 {
-        let idx = c_idx.get_index_of(&p.x);
         let idy = c_idy.get_index_of(&p.y);
-        let idr = c_idr.get_index_of(&(idx as i32));
+        let idr = c_idr.get_index_of(&c_idx.get_index_of(&p.x));
         if idr >= 0 {
             seg_tree[idr as usize].sum(0, c_idy.len() as i32, idy as i32)
         } else {
@@ -108,7 +116,11 @@ impl PersistentTree {
     }
 
     fn sum(&self, _l: i32, _r: i32, c_y: i32) -> i32 {
-        self.root.as_ref().unwrap().sum(_l, _r, c_y)
+        if let Some(ref node) = self.root {
+            Node::sum(node, _l, _r, c_y)
+        } else {
+            0
+        }
     }
 
     pub fn build_with(
